@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
     public CharacterController controller;
 
     public float speed = 12f;
+    public float springSpeed = 24f;
     public float jumpHeight = 3f;
     public float gravity = -9.81f;
 
@@ -31,7 +32,14 @@ public class PlayerController : MonoBehaviour
 
         Vector3 move = transform.right * x + transform.forward * z;
 
-        controller.Move(move * speed * Time.deltaTime);
+        if (Input.GetButton("sprint"))
+        {
+            controller.Move(move * springSpeed * Time.deltaTime);
+        }
+        else
+        {
+            controller.Move(move * speed * Time.deltaTime);
+        }
 
         //jump mechanic, finish map layout then change all tags(layer) to ground 
         if (Input.GetButton("Jump") && isGrounded)
