@@ -1,10 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
     public CharacterController controller;
+
+    public GameController GC;
+
+    public GameObject pressEToRepair;
+    public GameObject pressEToBuy;
+    private BuildingController BC;
+
+    public GameObject Robot;
 
     public float speed = 12f;
     public float springSpeed = 24f;
@@ -14,6 +23,8 @@ public class PlayerController : MonoBehaviour
     public Transform groundCheck;
     public float groundDistance = 0.4f;
     public LayerMask groundMask;
+
+    private int RobotPrice = 20;
 
     Vector3 velocity;
 
@@ -51,5 +62,59 @@ public class PlayerController : MonoBehaviour
 
         controller.Move(velocity * Time.deltaTime);
 
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.tag == "Building")
+        {
+            BC = other.GetComponent<BuildingController>();
+
+            if (BC.isFixed == false)
+            {
+                pressEToRepair.SetActive(true);
+            }
+        }
+        else if(other.tag == "RobotBuy")
+        {
+            pressEToBuy.SetActive(true);
+        }
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.tag == "Building")
+        {
+            if (Input.GetButtonDown("Repair") && BC.isFixed == false)
+            {
+                BC.Repair();
+                pressEToRepair.SetActive(false);
+            }
+        }
+        else if(other.tag == "RobotBuy")
+        {
+            if (Input.GetButtonDown("Repair"))
+            {
+                if (GC.MoneyAmount > RobotPrice)
+                {
+                    GC.MoneyAmount -= RobotPrice;
+
+                    Instantiate(Robot, other.transform.position, other.transform.rotation);
+                    RobotPrice *= 2;
+                }
+            }
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.tag == "Building")
+        {
+            pressEToRepair.SetActive(false);
+        }
+        else if(other.tag == "RobotBuy")
+        {
+            pressEToBuy.SetActive(false);
+        }
     }
 }

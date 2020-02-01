@@ -22,15 +22,8 @@ public class RobotController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (isRepairing)
-        {
-
-        }
-        else
-        {
-            MoveToBuilding();
-        }
-;   }
+        MoveToBuilding();
+    }
 
     public void FindBuildings()
     {
@@ -54,7 +47,7 @@ public class RobotController : MonoBehaviour
                 }
             }
 
-            transform.position = Vector3.MoveTowards(transform.position, wayPoints[current].transform.position,
+            transform.position = Vector3.MoveTowards(new Vector3(transform.position.x, 0.5f, transform.position.z), wayPoints[current].transform.position,
                 Time.deltaTime * speed);
         }
         else
